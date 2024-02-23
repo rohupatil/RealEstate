@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
+import cookieParser from 'cookie-parser'
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ mongoose
 const app=express();  /*it will call to mongo varible used in .env file so that no other person can see ur pass and DB name*/
 
 app.use(express.json());  /*it allows json as input at server*/
+
+app.use(cookieParser());
 
 app.listen(3000,()=>{
     console.log('app is running on 3000 port!')
