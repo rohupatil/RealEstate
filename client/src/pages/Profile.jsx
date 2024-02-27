@@ -4,7 +4,12 @@ import { useRef } from "react"; //used for if user clicked on profile img the im
 import { getStorage, ref, uploadBytesResumable,getDownloadURL } from "firebase/storage";
 import { app } from "../firebase";
 import { Link } from "react-router-dom";
-import { deleteUserFailure, deleteUserStart, deleteUserSuccess, updateUserFailure,updateUserStart,updateUserSuccess } from "../redux/user/userSlice";
+import { deleteUserFailure, deleteUserStart,     
+         deleteUserSuccess, signOutUserFailure,
+          signOutUserStart, signOutUserSuccess,
+           updateUserFailure,updateUserStart,
+           updateUserSuccess
+           } from "../redux/user/userSlice";
 
 export default function Profile() {
   const fileref = useRef(null);
@@ -77,11 +82,19 @@ const handledelete= async ()=>{
 
 
 
-  const signout=()=>{
-    localStorage.clear();
-
-    
-    window.location.reload();
+  const signout= async()=>{
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch('/api/auth/signout');
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        return;
+      }
+      dispatch(signOutUserSuccess(data));
+    } catch (error) {
+      dispatch(signOutUserFailure(data.message));
+    }
   }
   
   const handleChange=(e)=>{
