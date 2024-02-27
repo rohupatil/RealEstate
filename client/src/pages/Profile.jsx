@@ -4,7 +4,7 @@ import { useRef } from "react"; //used for if user clicked on profile img the im
 import { getStorage, ref, uploadBytesResumable,getDownloadURL } from "firebase/storage";
 import { app } from "../firebase";
 import { Link } from "react-router-dom";
-import { updateUserFailure,updateUserStart,updateUserSuccess } from "../redux/user/userSlice";
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, updateUserFailure,updateUserStart,updateUserSuccess } from "../redux/user/userSlice";
 
 export default function Profile() {
   const fileref = useRef(null);
@@ -55,6 +55,27 @@ export default function Profile() {
       }
     );
   };
+
+
+const handledelete= async ()=>{
+  try {
+    dispatch(deleteUserStart());
+    const res = await fetch(`/api/user/delete/${currrentUser._id}`, {
+      method: 'DELETE',
+    });
+    const data = await res.json();
+    if (data.success === false) {
+      dispatch(deleteUserFailure(data.message));
+      return;
+    }
+    dispatch(deleteUserSuccess(data));
+  } catch (error) {
+    dispatch(deleteUserFailure(error.message));
+  }
+}
+
+
+
 
   const signout=()=>{
     localStorage.clear();
@@ -157,7 +178,7 @@ export default function Profile() {
 
       <div className="flex justify-between mt-5">
       
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span onClick={handledelete} className="text-red-700 cursor-pointer">Delete account</span>
         <Link > <span className="text-red-700 cursor-pointer" onClick={signout}>Sign out</span></Link>
        
       </div>
